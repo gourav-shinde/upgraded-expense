@@ -95,11 +95,102 @@ class GraphState extends State<Graph> {
                         itemBuilder: (context, index) {
                           print(entryData.data[index]);
                           return ListTile(
-                            title: Text("Date :" +
-                                (entryData.data[index]["date"] ?? "hello")),
-                            trailing: Text("Amount :" +
-                                (entryData.data[index]["amount"] ?? "hello")),
+                            title: Card(
+                              shadowColor: Colors.black,
+                              color: Colors.grey[200],
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(8, 8, 8, 5),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Title(
+                                              color: Colors.black,
+                                              child: Text(
+                                                entryData.data[index]["date"] ??
+                                                    "hello",
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              )),
+                                        ),
+                                        Expanded(
+                                          child: Align(
+                                            alignment: Alignment.topRight,
+                                            child: Title(
+                                                color: Colors.green,
+                                                child: Text(
+                                                  "₹ " +
+                                                          entryData.data[index]
+                                                              ["amount"] ??
+                                                      "hello",
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                )),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Title(
+                                              color: Colors.black,
+                                              child: Text(
+                                                entryData.data[index]
+                                                        ["classification"] ??
+                                                    "hello",
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                ),
+                                              )),
+                                        ),
+                                        Expanded(
+                                          child: Align(
+                                            alignment: Alignment.topRight,
+                                            child: Title(
+                                                color: Colors.green,
+                                                child: Text(
+                                                  entryData.data[index]
+                                                          ["mode"] ??
+                                                      "hello",
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
+                                                )),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    entryData.data[index]["description"] ==
+                                                null ||
+                                            entryData.data[index]
+                                                    ["description"] ==
+                                                ""
+                                        ? Text(
+                                            "None",
+                                            style:
+                                                TextStyle(color: Colors.grey),
+                                          )
+                                        : Text(entryData.data[index]
+                                            ["description"]),
+                                  ],
+                                ),
+                              ),
+                            ),
                           );
+                          // ListTile(
+                          //   title: Text("Date :" +
+                          //       (entryData.data[index]["date"] ?? "hello")),
+                          //   trailing: Text("Amount :" +
+                          //       (entryData.data[index]["amount"] ?? "hello")),
+                          // );
                         });
             }
             return Container();

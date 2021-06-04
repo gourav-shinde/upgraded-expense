@@ -1,6 +1,7 @@
 import 'package:expense_diary_arsenel/day_expenses.dart';
 import 'package:expense_diary_arsenel/graphicView.dart';
 import 'package:expense_diary_arsenel/main.dart';
+import 'package:expense_diary_arsenel/month_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -80,6 +81,7 @@ class DiaryState extends State<Diary> {
     year = DateTime.now().year.toString();
     mondisp = monthToMonth(month);
     dayexpense = getdayExpense(date);
+    print(month);
     print(dayexpense);
     print("hmm");
   }
@@ -214,6 +216,19 @@ class DiaryState extends State<Diary> {
                               child: ListTile(
                                 title: Text(mondisp + " Expense"),
                                 trailing: Text("₹ " + snapshot.data['month']),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                        builder: (context) => MonthList(
+                                            month,
+                                            year,
+                                            snapshot.data['month'],
+                                            mondisp + " " + year)),
+                                  ).then((value) => setState(() {
+                                        dayexpense = getdayExpense(date);
+                                      }));
+                                },
                               )),
                           Container(
                               margin: EdgeInsets.fromLTRB(15, 0, 15, 10),

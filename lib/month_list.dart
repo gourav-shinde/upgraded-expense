@@ -7,18 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MonthList extends StatefulWidget {
-  String monthYear, total;
-  MonthList(this.monthYear, this.total);
+  String month, year, total, dispname;
+  MonthList(this.month, this.year, this.total, this.dispname);
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return MonthlistState(monthYear, total);
+    return MonthlistState(month, year, total, dispname);
   }
 }
 
 class MonthlistState extends State<MonthList> {
-  String monthYear, total;
-  MonthlistState(this.monthYear, this.total);
+  String month, year, total, dispname, monthYear;
+  MonthlistState(this.month, this.year, this.total, this.dispname);
   //variables
   Future _entryFuture;
   //Functions
@@ -26,11 +26,16 @@ class MonthlistState extends State<MonthList> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (int.parse(month) < 10) {
+      month = "0" + month;
+    }
+    monthYear = year + "-" + month;
+    print(monthYear + " monthlist");
     _entryFuture = getList(monthYear);
   }
 
   getList(String monthYear) async {
-    final _entrydata = await DBProvider.db.getDayList(monthYear);
+    final _entrydata = await DBProvider.db.getmonthlist(monthYear);
     return _entrydata;
   }
 
@@ -76,7 +81,7 @@ class MonthlistState extends State<MonthList> {
           elevation: 0,
           backgroundColor: Colors.white,
           title: Text(
-            "month year here" + " Expenses",
+            dispname + " Expenses",
             style: TextStyle(color: Colors.black54, fontFamily: 'RobotoMono'),
           ),
         ),
@@ -103,11 +108,10 @@ class MonthlistState extends State<MonthList> {
                         itemBuilder: (context, index) {
                           print(entryData.data[index]);
                           return ListTile(
-                            title: Text((entryData.data[index]
-                                        ["classification"] ??
-                                    "hello") +
-                                " " +
-                                (entryData.data[index]['mode'] ?? "null")),
+                            title: Text(
+                                (entryData.data[index]["date"] ?? "hello") +
+                                    " " +
+                                    (entryData.data[index]['mode'] ?? "null")),
                             trailing: Text("₹ " +
                                 (entryData.data[index]["amount"] ?? "hello")),
                             onTap: () {

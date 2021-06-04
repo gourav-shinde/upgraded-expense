@@ -250,4 +250,40 @@ class DBProvider {
     //final
     return fin;
   }
+
+  Future<dynamic> getmonthlist(String month) async {
+    print(month + "in await");
+    month = month + "___";
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT * from unit_entry
+    WHERE date LIKE '$month';
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
+
+  Future<dynamic> getyearlist(String year) async {
+    print(year + "in await");
+    year = year + "_____";
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT * from unit_entry
+    WHERE date LIKE '$year';
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
 }
