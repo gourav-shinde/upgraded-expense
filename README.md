@@ -28,7 +28,7 @@ Contributers:
 - Month/day/year expense fucntionality added with relational database design for faster retrieval of data.
 
 
-![Screenshot_20210717_121721_com example expense_diary_arsenel](https://user-images.githubusercontent.com/53346638/126038468-3b915506-088b-422d-8ac0-565f97228b37.jpg)
-![Screenshot_20210717_121741_com example expense_diary_arsenel](https://user-images.githubusercontent.com/53346638/126038473-6b9cb4e7-9a9d-4035-a812-893192f5ea19.jpg)
-![Screenshot_20210717_121728_com example expense_diary_arsenel](https://user-images.githubusercontent.com/53346638/126038476-be14f127-95f3-46aa-9ee1-50ea0a0c97af.jpg)
+![home40](https://user-images.githubusercontent.com/53346638/126038666-f85493be-a97f-46d9-9ea5-4cc4574f623b.jpg)
+![calender40](https://user-images.githubusercontent.com/53346638/126038669-b13554fe-2c4b-4803-b3c0-d2ea073e65ea.jpg)
+![list40](https://user-images.githubusercontent.com/53346638/126038670-543ed725-932b-41a4-9750-a8bf8ed95985.jpg)
 
