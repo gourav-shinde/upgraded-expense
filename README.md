@@ -1,4 +1,4 @@
-# Tenant Manager(Arsenel) 
+# Expense Manager(Arsenel) 
 
 Android Flutter Application with Sqlite Database. 
 
