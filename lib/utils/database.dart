@@ -146,7 +146,7 @@ class DBProvider {
   Future<dynamic> getEntry() async {
     //get entries
     final db = await database;
-    var res = await db.query("unit_entry");
+    var res = await db.rawQuery("SELECT * from unit_entry ORDER BY id desc;");
     if (res.length == 0) {
       return null;
     } else {
@@ -258,7 +258,7 @@ class DBProvider {
     var val = await db.rawQuery(
       '''
     SELECT * from unit_entry
-    WHERE date LIKE '$month';
+    WHERE date LIKE '$month' ORDER BY date desc;
     ''',
     );
     if (val.length == 0) {
