@@ -162,6 +162,31 @@ class DiaryState extends State<Diary> {
                     dayexpense = getdayExpense(date);
                   });
                 },
+                onVisibleDaysChanged: (first, last, format) {
+                  print(DateFormat.M().format(first) + "helllo");
+                  print(DateFormat.y().format(first));
+                  var month2 = int.parse(DateFormat.M().format(first));
+                  var year2 = int.parse(DateFormat.y().format(first));
+                  if (month == 12) {
+                    month2 = 1;
+                    year2 = year2 + 1;
+                  } else {
+                    month2 = month2 + 1;
+                  }
+                  String monthString =
+                      ((month2 < 10) ? "0" : "") + month2.toString();
+                  DateTime day = DateTime.parse(
+                      year2.toString() + "-" + monthString + "-01");
+                  setState(() {
+                    print(convDateToString(day));
+                    date = convDateToString(day);
+                    month = day.month.toString();
+                    year = day.year.toString();
+                    mondisp = monthToMonth(month);
+                    dayexpense = getdayExpense(date);
+                  });
+                  //current month
+                },
                 availableCalendarFormats: const {
                   CalendarFormat.twoWeeks: 'Minimal',
                   CalendarFormat.month: 'Moderate',

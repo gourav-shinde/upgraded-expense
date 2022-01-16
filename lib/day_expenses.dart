@@ -64,6 +64,8 @@ class DaylistState extends State<DayList> {
     });
   }
 
+  final TextEditingController searchController = TextEditingController();
+  String searchString = "";
   //UI
   @override
   Widget build(BuildContext context) {
@@ -86,7 +88,11 @@ class DaylistState extends State<DayList> {
                 return Container();
 
               case ConnectionState.waiting:
-                return Container();
+                return Container(
+                  child: Center(
+                    child: CupertinoActivityIndicator(),
+                  ),
+                );
 
               case ConnectionState.active:
                 return Container();
@@ -94,143 +100,193 @@ class DaylistState extends State<DayList> {
               case ConnectionState.done:
                 return entryData.data == null
                     ? Container(
-                        child: Text("empty"),
+                        child: Center(
+                          child: Icon(
+                            Icons.folder_open_outlined,
+                            size: 60,
+                          ),
+                        ),
                       )
-                    : ListView.builder(
-                        itemCount: entryData.data.length,
-                        itemBuilder: (context, index) {
-                          print(entryData.data[index]);
-                          return ListTile(
-                            title: Card(
-                              shadowColor: Colors.black,
-                              color: Colors.grey[200],
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(8, 8, 8, 5),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Title(
-                                              color: Colors.black,
-                                              child: Text(
-                                                entryData.data[index]["date"] ??
-                                                    "hello",
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              )),
-                                        ),
-                                        Expanded(
-                                          child: Align(
-                                            alignment: Alignment.topRight,
-                                            child: Title(
-                                                color: Colors.green,
-                                                child: Text(
-                                                  "₹ " +
-                                                          entryData.data[index]
-                                                              ["amount"] ??
-                                                      "hello",
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                )),
-                                          ),
-                                        )
-                                      ],
+                    : Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.fromLTRB(18, 0, 8, 5),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: searchController,
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(Icons.search),
                                     ),
-                                    Row(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Title(
-                                              color: Colors.black,
-                                              child: Text(
-                                                entryData.data[index]
-                                                        ["classification"] ??
-                                                    "hello",
-                                                style: TextStyle(
-                                                  fontSize: 15,
-                                                ),
-                                              )),
-                                        ),
-                                        Expanded(
-                                          child: Align(
-                                            alignment: Alignment.topRight,
-                                            child: Title(
-                                                color: Colors.green,
-                                                child: Text(
-                                                  entryData.data[index]
-                                                          ["mode"] ??
-                                                      "hello",
-                                                  style: TextStyle(
-                                                    color: Colors.grey,
-                                                  ),
-                                                )),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    entryData.data[index]["description"] ==
-                                                null ||
-                                            entryData.data[index]
-                                                    ["description"] ==
-                                                ""
-                                        ? Text(
-                                            "None",
-                                            style:
-                                                TextStyle(color: Colors.grey),
-                                          )
-                                        : Text(entryData.data[index]
-                                            ["description"]),
-                                  ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchString = value;
+                                      });
+                                    },
+                                  ),
                                 ),
-                              ),
+                                IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        searchController.clear();
+                                        searchString = "";
+                                      });
+                                    },
+                                    icon: Icon(Icons.cancel_outlined))
+                              ],
                             ),
-                            onLongPress: () {
-                              Navigator.of(context).push(DialogRoute(
-                                  context: context,
-                                  builder: (context) {
-                                    return CupertinoAlertDialog(
-                                      title:
-                                          Text("Do you want to Delete Record?"),
-                                      actions: [
-                                        CupertinoDialogAction(
-                                          child: Text("No"),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                        CupertinoDialogAction(
-                                          child: Text("Yes"),
-                                          onPressed: () async {
-                                            await DBProvider.db.deleteEntry(
-                                                entryData.data[index]['id'],
-                                                entryData.data[index]['amount'],
-                                                entryData.data[index]
-                                                    ['classification'],
-                                                entryData.data[index]['mode'],
-                                                entryData.data[index]['date']);
-                                            Navigator.pop(context);
-                                            _entryFuture = getList(date);
-                                            setState(() {});
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  }));
-                            },
-                          );
-                          // ListTile(
-                          //   title: Text("Date :" +
-                          //       (entryData.data[index]["date"] ?? "hello")),
-                          //   trailing: Text("Amount :" +
-                          //       (entryData.data[index]["amount"] ?? "hello")),
-                          // );
-                        });
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Expanded(
+                              child: ListView.builder(
+                                  itemCount: entryData.data.length,
+                                  itemBuilder: (context, index) {
+                                    print(entryData.data[index]);
+                                    return searchString != null &&
+                                            ((entryData.data[index]
+                                                        ["classification"])
+                                                    .toLowerCase()
+                                                    .contains(searchString
+                                                        .toLowerCase()) ||
+                                                (entryData.data[index]
+                                                        ["description"])
+                                                    .toLowerCase()
+                                                    .contains(searchString
+                                                        .toLowerCase()))
+                                        ? ListTile(
+                                            title: Card(
+                                              shadowColor: Colors.black,
+                                              color: Colors.grey[200],
+                                              child: Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    8, 8, 8, 5),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                          child: Title(
+                                                              color:
+                                                                  Colors.black,
+                                                              child: Text(
+                                                                entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        "date"] ??
+                                                                    "hello",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500),
+                                                              )),
+                                                        ),
+                                                        Expanded(
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .topRight,
+                                                            child: Title(
+                                                                color: Colors
+                                                                    .green,
+                                                                child: Text(
+                                                                  "₹ " +
+                                                                          entryData.data[index]
+                                                                              [
+                                                                              "amount"] ??
+                                                                      "hello",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                          child: Title(
+                                                              color:
+                                                                  Colors.black,
+                                                              child: Text(
+                                                                entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        "classification"] ??
+                                                                    "hello",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 15,
+                                                                ),
+                                                              )),
+                                                        ),
+                                                        Expanded(
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .topRight,
+                                                            child: Title(
+                                                                color: Colors
+                                                                    .green,
+                                                                child: Text(
+                                                                  entryData.data[
+                                                                              index]
+                                                                          [
+                                                                          "mode"] ??
+                                                                      "hello",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                  ),
+                                                                )),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    entryData.data[index][
+                                                                    "description"] ==
+                                                                null ||
+                                                            entryData.data[
+                                                                        index][
+                                                                    "description"] ==
+                                                                ""
+                                                        ? Text(
+                                                            "None",
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .grey),
+                                                          )
+                                                        : Text(entryData
+                                                                .data[index]
+                                                            ["description"]),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Container();
+                                    // ListTile(
+                                    //   title: Text("Date :" +
+                                    //       (entryData.data[index]["date"] ?? "hello")),
+                                    //   trailing: Text("Amount :" +
+                                    //       (entryData.data[index]["amount"] ?? "hello")),
+                                    // );
+                                  }))
+                        ],
+                      );
             }
             return Container();
           },

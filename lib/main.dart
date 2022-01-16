@@ -93,7 +93,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           actions: [
             TextButton(
-              onPressed: null,
+              onPressed: () {
+                _bottomSheetModel(context);
+              },
               child: Icon(Icons.menu),
             )
           ],
@@ -363,7 +365,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                     ),
-                  )
+                  ),
                 ],
               ))
             ],
@@ -380,4 +382,37 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ));
   }
+}
+
+void _bottomSheetModel(BuildContext context) {
+  showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+            color: Color(0xFF737373),
+            height: MediaQuery.of(context).size.height * 0.24,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: const Color.fromRGBO(255, 255, 255, 1),
+                  borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(20),
+                      topRight: const Radius.circular(20))),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 5,
+                  ),
+                  ListTile(
+                    title: Text("Backup"),
+                  ),
+                  ListTile(
+                    title: Text("Restore"),
+                  ),
+                  ListTile(
+                    title: Text("Add Category"),
+                  )
+                ],
+              ),
+            ));
+      });
 }
