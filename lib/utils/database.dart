@@ -286,4 +286,141 @@ class DBProvider {
       return val;
     }
   }
+
+  Future<dynamic> getYearGraph(String year) async {
+    print(year + "in await");
+
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT * from month
+    WHERE monthyear LIKE '__$year';
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
+
+  Future<dynamic> getCashOnline(String year) async {
+    print(year + "in await");
+
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT SUM(amount) from unit_entry
+    WHERE date LIKE '$year%' and mode='CashPayment';
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
+
+  Future<dynamic> getMonthGraph(String year, String month) async {
+    String searchterm = year + "-" + month;
+
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT date,SUM(amount) from unit_entry
+    WHERE date LIKE '$searchterm%' GROUP By date;
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
+
+  Future<dynamic> getCashOnlineMonth(String year, String month) async {
+    String searchterm = year + "-" + month;
+
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT SUM(amount) from unit_entry
+    WHERE date LIKE '$searchterm%' and mode='CashPayment';
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
+
+  Future<dynamic> getPieDay(String date) async {
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT classification,SUM(amount) from unit_entry
+    WHERE date ='$date' GROUP by classification;
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
+
+  Future<dynamic> getCashOnlineDay(String date) async {
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT SUM(amount) from unit_entry
+    WHERE date = '$date' and mode='CashPayment';
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
+
+  Future<dynamic> getClassificationMonth(String year, String month) async {
+    String searchterm = year + "-" + month;
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT classification,SUM(amount) from unit_entry
+    WHERE date LIKE '$searchterm%' GROUP by classification;
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
+
+  Future<dynamic> getClassificationYear(String year) async {
+    final db = await database;
+    var val = await db.rawQuery(
+      '''
+    SELECT classification,SUM(amount) from unit_entry
+    WHERE date LIKE '$year%' GROUP BY classification;
+    ''',
+    );
+    if (val.length == 0) {
+      return null;
+    } else {
+      print(val);
+      return val;
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:expense_diary_arsenel/diary.dart';
 import 'package:expense_diary_arsenel/graphicView.dart';
+import 'package:expense_diary_arsenel/graphmonth.dart';
 import 'package:expense_diary_arsenel/main.dart';
 import 'package:expense_diary_arsenel/utils/database.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,6 +87,18 @@ class MonthlistState extends State<MonthList> {
             dispname + " Expenses",
             style: TextStyle(color: Colors.black54, fontFamily: 'RobotoMono'),
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => MonthGraph(year, month, total)),
+                ).then((value) => setState(() {}));
+              },
+              child: Icon(Icons.dashboard_outlined),
+            )
+          ],
         ),
         body: FutureBuilder(
           future: _entryFuture,
@@ -164,6 +177,61 @@ class MonthlistState extends State<MonthList> {
                                                     .contains(searchString
                                                         .toLowerCase()))
                                         ? ListTile(
+                                            onLongPress: () {
+                                              Navigator.of(context)
+                                                  .push(DialogRoute(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Text(
+                                                              "Do you want to Delete Record?"),
+                                                          actions: [
+                                                            CupertinoDialogAction(
+                                                              child: Text("No"),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            CupertinoDialogAction(
+                                                              isDefaultAction:
+                                                                  true,
+                                                              child:
+                                                                  Text("Yes"),
+                                                              onPressed:
+                                                                  () async {
+                                                                await DBProvider.db.deleteEntry(
+                                                                    entryData.data[
+                                                                            index][
+                                                                        'id'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'amount'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'classification'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'mode'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'date']);
+                                                                Navigator.pop(
+                                                                    context);
+                                                                _entryFuture =
+                                                                    getList(
+                                                                        monthYear);
+                                                                setState(() {});
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      }));
+                                            },
                                             title: Card(
                                               shadowColor: Colors.black,
                                               color: Colors.grey[200],
@@ -305,7 +373,7 @@ class MonthlistState extends State<MonthList> {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Diary'),
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.payment), label: "Test")
+            BottomNavigationBarItem(icon: Icon(Icons.payment), label: "Records")
           ],
         ));
   }

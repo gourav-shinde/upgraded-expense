@@ -2,6 +2,7 @@ import 'package:expense_diary_arsenel/day_expenses.dart';
 import 'package:expense_diary_arsenel/graphicView.dart';
 import 'package:expense_diary_arsenel/main.dart';
 import 'package:expense_diary_arsenel/month_list.dart';
+import 'package:expense_diary_arsenel/yearGraph.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +19,7 @@ class Diary extends StatefulWidget {
 
 class DiaryState extends State<Diary> {
   //variables
-  CalendarController _calendarController;
+
   DateTime date1 = new DateTime.now();
   String date = "";
   String month = "", year = "", mondisp = "";
@@ -75,7 +76,7 @@ class DiaryState extends State<Diary> {
   @override
   void initState() {
     super.initState();
-    _calendarController = CalendarController();
+
     date = convDateToString(date1);
     month = DateTime.now().month.toString();
     year = DateTime.now().year.toString();
@@ -92,12 +93,6 @@ class DiaryState extends State<Diary> {
     print("hello");
     print(val);
     return val;
-  }
-
-  @override
-  void dispose() {
-    _calendarController.dispose();
-    super.dispose();
   }
 
   void onTapFunc(int index) {
@@ -146,52 +141,52 @@ class DiaryState extends State<Diary> {
           child: Column(
             children: <Widget>[
               TableCalendar(
-                calendarStyle: const CalendarStyle(
-                    todayColor: Colors.black26,
-                    weekendStyle: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w500),
-                    selectedColor: Colors.black45),
-                calendarController: _calendarController,
-                onDaySelected: (day, events, holidays) {
+                calendarStyle: CalendarStyle(
+                  todayDecoration: BoxDecoration(
+                      color: Colors.grey[350], shape: BoxShape.circle),
+                  selectedDecoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.black45,
+                  ),
+                  todayTextStyle: TextStyle(color: Colors.black),
+                  weekendTextStyle: TextStyle(color: Colors.red),
+                ),
+                firstDay: DateTime.utc(2000, 01, 01),
+                lastDay: DateTime.utc(2050, 01, 01),
+                focusedDay: date1,
+                selectedDayPredicate: (day) => isSameDay(day, date1),
+                onDaySelected: (selectedDay, focusedDay) {
                   setState(() {
-                    print(convDateToString(day));
-                    date = convDateToString(day);
-                    month = day.month.toString();
-                    year = day.year.toString();
+                    date1 = selectedDay;
+                    print(convDateToString(date1));
+                    date = convDateToString(date1);
+                    month = date1.month.toString();
+                    year = date1.year.toString();
                     mondisp = monthToMonth(month);
                     dayexpense = getdayExpense(date);
                   });
                 },
-                onVisibleDaysChanged: (first, last, format) {
-                  print(DateFormat.M().format(first) + "helllo");
-                  print(DateFormat.y().format(first));
-                  var month2 = int.parse(DateFormat.M().format(first));
-                  var year2 = int.parse(DateFormat.y().format(first));
-                  if (month == 12) {
-                    month2 = 1;
-                    year2 = year2 + 1;
-                  } else {
-                    month2 = month2 + 1;
-                  }
-                  String monthString =
-                      ((month2 < 10) ? "0" : "") + month2.toString();
-                  DateTime day = DateTime.parse(
-                      year2.toString() + "-" + monthString + "-01");
+                onPageChanged: (focusedDay) {
                   setState(() {
-                    print(convDateToString(day));
-                    date = convDateToString(day);
-                    month = day.month.toString();
-                    year = day.year.toString();
+                    print(focusedDay);
+                    date1 = focusedDay;
+                    print(convDateToString(date1));
+                    date = convDateToString(date1);
+                    month = date1.month.toString();
+                    year = date1.year.toString();
                     mondisp = monthToMonth(month);
                     dayexpense = getdayExpense(date);
                   });
-                  //current month
                 },
+                onFormatChanged: (format) {},
                 availableCalendarFormats: const {
                   CalendarFormat.twoWeeks: 'Minimal',
                   CalendarFormat.month: 'Moderate',
                   CalendarFormat.week: 'Full'
                 },
+              ),
+              SizedBox(
+                height: 10,
               ),
               FutureBuilder(
                 future: dayexpense,
@@ -263,6 +258,16 @@ class DiaryState extends State<Diary> {
                               child: ListTile(
                                 title: Text(year + " Expense"),
                                 trailing: Text("₹ " + snapshot.data['year']),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                        builder: (context) => NestedMainGraph(
+                                            year, snapshot.data['year'])),
+                                  ).then((value) => setState(() {
+                                        dayexpense = getdayExpense(date);
+                                      }));
+                                },
                               )),
                         ],
                       );
@@ -280,7 +285,7 @@ class DiaryState extends State<Diary> {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Diary'),
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.payment), label: "Test")
+            BottomNavigationBarItem(icon: Icon(Icons.payment), label: "Records")
           ],
         ));
   }

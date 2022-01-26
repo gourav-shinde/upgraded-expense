@@ -70,7 +70,7 @@ class GraphState extends State<Graph> {
           elevation: 0,
           backgroundColor: Colors.white,
           title: Text(
-            "Graph/Debug",
+            "All Records",
             style: TextStyle(color: Colors.black54, fontFamily: 'RobotoMono'),
           ),
         ),
@@ -151,6 +151,60 @@ class GraphState extends State<Graph> {
                                                     .contains(searchString
                                                         .toLowerCase()))
                                         ? ListTile(
+                                            onLongPress: () {
+                                              Navigator.of(context)
+                                                  .push(DialogRoute(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Text(
+                                                              "Do you want to Delete Record?"),
+                                                          actions: [
+                                                            CupertinoDialogAction(
+                                                              child: Text("No"),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            CupertinoDialogAction(
+                                                              isDefaultAction:
+                                                                  true,
+                                                              child:
+                                                                  Text("Yes"),
+                                                              onPressed:
+                                                                  () async {
+                                                                await DBProvider.db.deleteEntry(
+                                                                    entryData.data[
+                                                                            index][
+                                                                        'id'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'amount'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'classification'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'mode'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'date']);
+                                                                Navigator.pop(
+                                                                    context);
+                                                                _entryFuture =
+                                                                    getEntry();
+                                                                setState(() {});
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      }));
+                                            },
                                             title: Card(
                                               shadowColor: Colors.black,
                                               color: Colors.grey[200],
@@ -292,7 +346,7 @@ class GraphState extends State<Graph> {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Diary'),
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.payment), label: "Test")
+            BottomNavigationBarItem(icon: Icon(Icons.payment), label: "Records")
           ],
         ));
   }

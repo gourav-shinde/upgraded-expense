@@ -1,3 +1,4 @@
+import 'package:expense_diary_arsenel/dayGraph.dart';
 import 'package:expense_diary_arsenel/graphicView.dart';
 import 'package:expense_diary_arsenel/main.dart';
 import 'package:expense_diary_arsenel/utils/database.dart';
@@ -79,6 +80,18 @@ class DaylistState extends State<DayList> {
             date + " Expenses",
             style: TextStyle(color: Colors.black54, fontFamily: 'RobotoMono'),
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => DayGraph(date, total)),
+                ).then((value) => setState(() {}));
+              },
+              child: Icon(Icons.dashboard_outlined),
+            )
+          ],
         ),
         body: FutureBuilder(
           future: _entryFuture,
@@ -157,6 +170,61 @@ class DaylistState extends State<DayList> {
                                                     .contains(searchString
                                                         .toLowerCase()))
                                         ? ListTile(
+                                            onLongPress: () {
+                                              Navigator.of(context)
+                                                  .push(DialogRoute(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Text(
+                                                              "Do you want to Delete Record?"),
+                                                          actions: [
+                                                            CupertinoDialogAction(
+                                                              child: Text("No"),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            CupertinoDialogAction(
+                                                              isDefaultAction:
+                                                                  true,
+                                                              child:
+                                                                  Text("Yes"),
+                                                              onPressed:
+                                                                  () async {
+                                                                await DBProvider.db.deleteEntry(
+                                                                    entryData.data[
+                                                                            index][
+                                                                        'id'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'amount'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'classification'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'mode'],
+                                                                    entryData.data[
+                                                                            index]
+                                                                        [
+                                                                        'date']);
+                                                                Navigator.pop(
+                                                                    context);
+                                                                _entryFuture =
+                                                                    getList(
+                                                                        date);
+                                                                setState(() {});
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      }));
+                                            },
                                             title: Card(
                                               shadowColor: Colors.black,
                                               color: Colors.grey[200],
